@@ -1,0 +1,945 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0045)http://6.869.csail.mit.edu/fa19/schedule.html -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<link href="https://fonts.cdnfonts.com/css/caveat" rel="stylesheet">
+<style>
+    @import url('https://fonts.cdnfonts.com/css/caveat');
+</style>
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>ETC</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <meta name="description"
+        content="Project page for &#39;ETC: training-free diffusion models acceleration with Error-aware Trend Consistency.&#39;">
+    <link rel="icon" href="./assets/etc.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+    <p class="title">ETC: training-free diffusion models acceleration with Error-aware Trend Consistency</p>
+    <!-- <div style="text-align: center; font-size: 20pt; margin-bottom: 15px">
+        <span>ICCV 2023</span>
+    </div> -->
+    <!-- <p class="author">
+        <span class="author">
+            <a href="https://zhangjiewu.github.io/">Jiajian Xie</a><sup>1</sup>
+        </span>
+        <span class="author">
+            <a href="https://geyixiao.com/">Shengyu Zhang</a><sup>1</sup>
+        </span>
+        <span class="author">
+            <a href="https://xinntao.github.io/">Zhou Zhao</a><sup>1</sup>
+        </span>
+        <span class="author">
+            <a href="">Fan Wu</a><sup>2</sup>
+        </span>
+        <span class="author">
+            <a href="https://ycgu.site/">Fei Wu</a><sup>1</sup>
+        </span>
+    </p> -->
+
+    <!-- <p class="affiliations">
+        <span class="author"><sup>1</sup>Zhejiang University</span>,<sup>2</sup>Shanghai Jiao Tong University</span><br/>
+    </p> -->
+
+    <p class="menu">
+        <!-- <a style="color: steelblue" href="https://openreview.net/pdf?id=VWXO3aXdfT">[Paper (OpenReview)]</a> -->
+        <a style="color: steelblue" href="https://anonymous.4open.science/r/ETC-Diffusion-B813" >[Code (Anonymous Github)]</a>
+        <!-- <a style="color: steelblue" href="https://colab.research.google.com/github/showlab/Tune-A-Video/blob/main/notebooks/Tune-A-Video.ipynb">[Demo (Colab)]</a>
+        <a style="color: steelblue" href="https://huggingface.co/spaces/Tune-A-Video-library/Tune-A-Video-inference">[Demo (Hugging Face)]</a> -->
+    </p>
+
+    <div class="container">
+        <p style="text-align: center;"><span class="section"><b>Abstract</b></span></p>
+        <p style="text-align: justify; display: flex; justify-content: center; max-width: 800px; margin:auto"> 
+            Diffusion models have achieved remarkable generative quality but remain bottlenecked by costly iterative sampling. 
+            Recent training-free methods accelerate diffusion process by reusing model outputs. However, these methods ignore denoising trends 
+            and lack error control for model-specific tolerance, leading to trajectory deviations under multi-step reuse and exacerbating inconsistencies 
+            in the generated results. To address these issues, we introduce Error-aware Trend Consistency (ETC), a framework that (1) introduces a consistent 
+            trend predictor that leverages the smooth continuity of diffusion trajectories, projecting historical denoising patterns into stable future 
+            directions and progressively distributing them across multiple approximation steps to achieve acceleration without deviating; (2) proposes a 
+            model-specific error tolerance search mechanism that derives corrective thresholds by identifying transition points from volatile semantic planning 
+            to stable quality refinement. Experiments show that ETC achieves a 2.65× acceleration over FLUX with negligible (-0.074 SSIM score) degradation of consistency.
+        <p class="section">&nbsp;</p>
+        
+        <!-- <p class="section"><b>Method</b></p> -->
+        <p style="text-align: center;"><span class="section"><b>Method</b></span></p>
+        <div style="text-align: center">
+            <img src="./assets/method.png" alt="" width="1080px" style="max-width: 100%; height: auto;" />
+        </div>
+        <p style="text-align: justify">
+            Overview of the proposed ETC. ETC leverages all historical model outputs to estimate future trends and dynamically adjusts approximation frequency 
+            according to each model’s error tolerance limit. Trend predictor compute weighted projections of cross-step changes in model outputs and dynamically 
+            extends or contracts the approximation window based on whether deviations between projected trends and periodic model inferences remain within the 
+            model’s corrective capacity. Model-specific error tolerance search quantify the perceptual influence of deviation perturbations on generation quality 
+            and derive critical transition points from volatile semantic planning to smooth quality refinement phases that reflect model limits for error correction.
+        </p>
+        
+        <p class="section">&nbsp;</p>
+        
+        <p style="text-align: center;"><span class="section"><b>Results</b></span></p>
+
+        <div style="text-align: center">
+            <img src="./assets/teaser.gif" alt="" style="width: 98%; height: auto;" />
+        </div>
+        </br>
+        <div class="container" style="min-height: 224px">
+            <p style="text-align: center; font-size: 150%">SDXL-Base</p>
+            <div id="resultCarousel1" class="carousel slide" data-ride="carousel" data-interval="5000">
+                <div class="carousel-inner">
+
+                    <div class="carousel-item active">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"some colorful carrots sitting on a table next to some other veggies."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/some colorful carrots sitting on a table next to some other veggies/origin_9.28.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/some colorful carrots sitting on a table next to some other veggies/adaptive_4.75.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/some colorful carrots sitting on a table next to some other veggies/sada_5.52.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/some colorful carrots sitting on a table next to some other veggies/etc_4.32.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.28s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.75s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (5.52s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.32s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"the woman is wearing and umbrella hat and on her phone."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/the woman is wearing and umbrella hat and on her phone/origin_9.31.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/the woman is wearing and umbrella hat and on her phone/adaptive_4.73.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/the woman is wearing and umbrella hat and on her phone/sada_5.16.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/the woman is wearing and umbrella hat and on her phone/etc_4.72.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.31s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.73s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (5.16s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.72s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"two women and two girls in makeup and one is talking on a cellphone."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/two women and two girls in makeup and one is talking on a cellphone/origin_9.31.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/two women and two girls in makeup and one is talking on a cellphone/adaptive_4.73.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/two women and two girls in makeup and one is talking on a cellphone/sada_5.20.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/two women and two girls in makeup and one is talking on a cellphone/etc_4.60.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.31s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.73s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (5.20s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.60s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"children and an instructor on  a beach, with the children sitting on surfboards."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/children and an instructor on  a beach, with the children sitting on surfboards/origin_9.10.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/children and an instructor on  a beach, with the children sitting on surfboards/adaptive_4.62.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/children and an instructor on  a beach, with the children sitting on surfboards/sada_5.12.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/children and an instructor on  a beach, with the children sitting on surfboards/etc_4.42.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.10s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.62s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (5.12s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.42s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"a toilet a bathtub a rack bottles and a shower curtain."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/a toilet a bathtub a rack bottles and a shower curtain/origin_9.10.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a toilet a bathtub a rack bottles and a shower curtain/adaptive_4.58.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a toilet a bathtub a rack bottles and a shower curtain/sada_4.94.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a toilet a bathtub a rack bottles and a shower curtain/etc_4.43.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.10s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.58s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (4.94s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.43s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"A few people sitting by a busy street."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/A few people sitting by a busy street/origin_9.21.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/A few people sitting by a busy street/adaptive_5.11.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/A few people sitting by a busy street/sada_4.90.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/A few people sitting by a busy street/etc_4.46.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.21s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (5.11s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (4.90s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.46s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"a tennis player stretching to hit a tennis ball."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/a tennis player stretching to hit a tennis ball/origin_9.05.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a tennis player stretching to hit a tennis ball/adaptive_4.82.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a tennis player stretching to hit a tennis ball/sada_5.18.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a tennis player stretching to hit a tennis ball/etc_4.52.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.05s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.82s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (5.18s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.52s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"a street sign with a traffic light underneath."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/a street sign with a traffic light underneath/origin_9.22.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a street sign with a traffic light underneath/adaptive_4.83.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a street sign with a traffic light underneath/sada_5.41.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a street sign with a traffic light underneath/etc_4.61.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.22s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.83s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (5.41s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"a small roomw ith a televisiona nd some furniture in it."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/a small roomw ith a televisiona nd some furniture in it/origin_9.10.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a small roomw ith a televisiona nd some furniture in it/adaptive_4.76.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a small roomw ith a televisiona nd some furniture in it/sada_5.15.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a small roomw ith a televisiona nd some furniture in it/etc_4.55.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.10s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.76s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (5.15s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.55s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 1000px;">"a man on a motorcycle indoors attempts to lick the windshield."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="250" src="./assets/SDXL/a man on a motorcycle indoors attempts to lick the windshield/origin_9.05.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a man on a motorcycle indoors attempts to lick the windshield/adaptive_4.85.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a man on a motorcycle indoors attempts to lick the windshield/sada_4.95.png" /></th>
+                                    <th><img width="250" src="./assets/SDXL/a man on a motorcycle indoors attempts to lick the windshield/etc_4.53.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 250px;">Origin (9.05s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">AdaptiveDiff (4.85s)</div></th>
+                                    <th><div class="caption" style="width: 250px;">SADA (4.95s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">ETC (4.53s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <a class="carousel-control-prev" href="#resultCarousel1" role="button" data-slide="prev">
+                    <div class="slider-navigation-previous" style="top: 40%">
+                        <svg viewBox="0 0 50 80" xml:space="preserve">
+                            <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                                stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 ">
+                            </polyline>
+                        </svg>
+                    </div>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#resultCarousel1" role="button" data-slide="next">
+                    <div class="slider-navigation-next" style="top: 40%">
+                        <svg viewBox="0 0 50 80" xml:space="preserve">
+                            <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                                stroke-linejoin="round" points="0.375,0.375 45.63,38.087 0.375,75.8 ">
+                            </polyline>
+                        </svg>
+                    </div>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+        <!--
+        </br>
+        <div class="container" style="min-height: 224px">
+            <p style="text-align: center; font-size: 150%">Pretrained T2I (SDXL-Base (Cloud) + SSD-vega (Edge))</p>
+            <div id="resultCarousel2" class="carousel slide" data-ride="carousel" data-interval="5000">
+                <div class="carousel-inner">
+
+                    <div class="carousel-item active">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A black Honda motorcycle with a dark burgundy seat."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/A black Honda motorcycle with a dark burgundy seat..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/A black Honda motorcycle with a dark burgundy seat..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/A black Honda motorcycle with a dark burgundy seat..png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A truck with an ad for a television show painted on its side"</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/A truck with an ad for a television show painted on its side.png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/A truck with an ad for a television show painted on its side.png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/A truck with an ad for a television show painted on its side.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"An old green car parked on the side of the street."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/An old green car parked on the side of the street..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/An old green car parked on the side of the street..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/An old green car parked on the side of the street..png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"There are some dirt bike riders taking a sharp turn"</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/There are some dirt bike riders taking a sharp turn.png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/There are some dirt bike riders taking a sharp turn.png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/There are some dirt bike riders taking a sharp turn.png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"The woman in the kitchen is holding a huge pan."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/The woman in the kitchen is holding a huge pan..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/The woman in the kitchen is holding a huge pan..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/The woman in the kitchen is holding a huge pan..png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A beautiful young lady walking in the rain while holding an umbrella."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/A beautiful young lady walking in the rain while holding an umbrella..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/A beautiful young lady walking in the rain while holding an umbrella..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/A beautiful young lady walking in the rain while holding an umbrella..png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"An airplane is doing tricks and emitting smoke."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/An airplane is doing tricks and emitting smoke..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/An airplane is doing tricks and emitting smoke..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/An airplane is doing tricks and emitting smoke..png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A dining table with a bowl of garlic cloves."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/A dining table with a bowl of garlic cloves..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/A dining table with a bowl of garlic cloves..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/A dining table with a bowl of garlic cloves..png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A small wooden table covered with delicious vegetables. "</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/A small wooden table covered with delicious vegetables. .png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/A small wooden table covered with delicious vegetables. .png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/A small wooden table covered with delicious vegetables. .png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A telephone has it receiver replaced with a banana."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/SDXL/cloud/A telephone has it receiver replaced with a banana..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/edge/A telephone has it receiver replaced with a banana..png" /></th>
+                                    <th><img width="300" src="./assets/SDXL/ec-diff/A telephone has it receiver replaced with a banana..png" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (6.25s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (3.27s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (2.61s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <a class="carousel-control-prev" href="#resultCarousel2" role="button" data-slide="prev">
+                    <div class="slider-navigation-previous" style="top: 65%">
+                        <svg viewBox="0 0 50 80" xml:space="preserve">
+                            <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                                stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 ">
+                            </polyline>
+                        </svg>
+                    </div>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#resultCarousel2" role="button" data-slide="next">
+                    <div class="slider-navigation-next" style="top: 65%">
+                        <svg viewBox="0 0 50 80" xml:space="preserve">
+                            <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                                stroke-linejoin="round" points="0.375,0.375 45.63,38.087 0.375,75.8 ">
+                            </polyline>
+                        </svg>
+                    </div>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+
+        </br>
+        <div class="container" style="min-height: 224px">
+            <p style="text-align: center; font-size: 150%">Pretrained T2V (CogVideoX-5B (Cloud) + CogVideoX-2B (Edge))</p>
+            <div id="resultCarousel3" class="carousel slide" data-ride="carousel" data-interval="5000">
+                <div class="carousel-inner">
+
+                    <div class="carousel-item active">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"a bear."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/a bear.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/a bear.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/a bear.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A beautiful coastal beach in spring, waves lapping on sand, animated style."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A beautiful coastal beach in spring, waves lapping on sand, animated style.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A beautiful coastal beach in spring, waves lapping on sand, animated style.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A beautiful coastal beach in spring, waves lapping on sand, animated style.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A cat wearing sunglasses at a pool."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A cat wearing sunglasses at a pool.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A cat wearing sunglasses at a pool.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A cat wearing sunglasses at a pool.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"a cat."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/a cat.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/a cat.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/a cat.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A couple in formal evening wear going home get caught in a heavy downpour with umbrellas, animated style.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A person is laughing."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A person is laughing.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A person is laughing.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A person is laughing.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A person is motorcycling."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A person is motorcycling.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A person is motorcycling.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A person is motorcycling.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A person is riding a bike."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A person is riding a bike.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A person is riding a bike.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A person is riding a bike.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A raccoon is playing the electronic guitar."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A raccoon is playing the electronic guitar..gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A raccoon is playing the electronic guitar..gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A raccoon is playing the electronic guitar..gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"A storm trooper vacuuming the beach."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/A storm trooper vacuuming the beach..gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/A storm trooper vacuuming the beach..gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/A storm trooper vacuuming the beach..gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"An astronaut flying in space, Van Gogh style."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/An astronaut flying in space, Van Gogh style.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/An astronaut flying in space, Van Gogh style.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/An astronaut flying in space, Van Gogh style.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"An astronaut is riding a horse in the space in a photorealistic style."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/An astronaut is riding a horse in the space in a photorealistic style..gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/An astronaut is riding a horse in the space in a photorealistic style..gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/An astronaut is riding a horse in the space in a photorealistic style..gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"aquarium."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/aquarium.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/aquarium.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/aquarium.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"Gwen Stacy reading a book, tilt up."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/Gwen Stacy reading a book, tilt up.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/Gwen Stacy reading a book, tilt up.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/Gwen Stacy reading a book, tilt up.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="carousel-item">
+                        <table width="1080px" align="center">
+                            <div class="caption" style="width: 900px;">"Snow rocky mountains peaks canyon. snow blanketed rocky mountains surround and shadow deep canyons. the canyons twist and bend through the high elevated mountain peaks, black and white."</div>
+                            <tbody>
+                                <tr>
+                                    <th><img width="300" src="./assets/CogVideoX/cloud/Snow rocky mountains peaks canyon. snow blanketed rocky mountains surround and shadow deep canyons. the canyons twist and bend through the high elevated mountain peaks, black and white.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/edge/Snow rocky mountains peaks canyon. snow blanketed rocky mountains surround and shadow deep canyons. the canyons twist and bend through the high elevated mountain peaks, black and white.gif" /></th>
+                                    <th><img width="300" src="./assets/CogVideoX/ec-diff/Snow rocky mountains peaks canyon. snow blanketed rocky mountains surround and shadow deep canyons. the canyons twist and bend through the high elevated mountain peaks, black and white.gif" /></th>
+                                </tr>
+                                <tr>
+                                    <th><div class="caption" style="width: 300px;">Cloud (245s)</div></th>
+                                    <th><div class="caption" style="width: 300px;">Edge (91s)</div></th>
+                                    <th><div class="caption"><span style="color: steelblue">EC-Diff (105s)</span></div></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <a class="carousel-control-prev" href="#resultCarousel3" role="button" data-slide="prev">
+                    <div class="slider-navigation-previous" style="top: 65%">
+                        <svg viewBox="0 0 50 80" xml:space="preserve">
+                            <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                                stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 ">
+                            </polyline>
+                        </svg>
+                    </div>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#resultCarousel3" role="button" data-slide="next">
+                    <div class="slider-navigation-next" style="top: 65%">
+                        <svg viewBox="0 0 50 80" xml:space="preserve">
+                            <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                                stroke-linejoin="round" points="0.375,0.375 45.63,38.087 0.375,75.8 ">
+                            </polyline>
+                        </svg>
+                    </div>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+        -->
+
+        <p class="section">&nbsp;</p>
+
+        <!-- <p class="section" id="paper"><b>Paper</b></p>
+        <table width="940" border="0">
+            <tbody>
+                <tr>
+                    <td height="100"><a href="https://arxiv.org/abs/2211.12572" target="_blank" rel="noopener noreferrer"><img
+                                src="./sm/assets/paper_cover.jpeg" alt="" width="140" height="167"></a></td>
+                    <td width="750">
+                        <p><b>Plug-and-Play Diffusion Features for Text-Driven Image-to-Image Translation</b><br>
+                            Narek Tumanyan <sup>*</sup>, Michal Geyer <sup>*</sup>, Shai Bagon, Tali Dekel.<br />
+                            (* indicates equal contribution) <br>
+                            [<a href="https://arxiv.org/abs/2211.12572" target="_blank"
+                                rel="noopener noreferrer">paper</a>]</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="section">&nbsp;</p> -->
+
+        <!-- <p class="section" id="sm"><b>Supplementary Material</b></p>
+        <table width="587" height="136" border="0">
+            <tbody>
+                <tr>
+                    <td width="180"><img src="./assets/sm/assets/sm.png" alt="" height="150"></td>
+                    <td align="left">
+                        <p>[<a href="./assets/sm/index.html" target="_blank">supplementary page</a>]</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="section">&nbsp;</p> -->
+
+        <!-- <p class="section" id="bibtex"><b>Bibtex</b></p>
+        <table border="0">
+            <tbody>
+                <pre style=" display: block;
+                    background: #eee;
+                    white-space: pre;
+                    -webkit-overflow-scrolling: touch;
+                    max-width: 100%;
+                    min-width: 100px;
+                    border-radius: 20px;
+                    ">
+
+    @inproceedings{wu2023tune,
+        title={Tune-a-video: One-shot tuning of image diffusion models for text-to-video generation},
+        author={Wu, Jay Zhangjie and Ge, Yixiao and Wang, Xintao and Lei, Stan Weixian and Gu, Yuchao and Shi, Yufei and Hsu, Wynne and Shan, Ying and Qie, Xiaohu and Shou, Mike Zheng},
+        booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+        pages={7623--7633},
+        year={2023}
+    }       
+			    </pre>
+            </tbody>
+        </table> -->
+        
+    </div>
+
+    <footer class="footer">
+        <p style="text-align: center;">
+            This page was adapted from <a href="https://github.com/tuneavideo/tuneavideo.github.io">this</a> source code.
+        </p>
+    </footer>
+
+
+</body>
+
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-WLX2Z5QLG8');
+ </script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script type="text/javascript">
+    $(document).ready(function () {
+
+        if (localStorage.getItem("my_app_name_here-quote-scroll") != null) {
+            $(window).scrollTop(localStorage.getItem("my_app_name_here-quote-scroll"));
+        }
+
+        $(window).on("scroll", function() {
+            localStorage.setItem("my_app_name_here-quote-scroll", $(window).scrollTop());
+        });
+
+      });
+ </script>
+
+ <script>
+    function prompt_on(prompt_element) {
+        prompt_element.classList.add("caption-active");
+    }
+
+    function prompt_off(prompt_element) {
+        prompt_element.classList.remove("caption-active");
+    }
+
+    function toggle_prompt(active_prompt_id, inactive_prompt_ids, result_id) {
+        let active_prompt = document.getElementById(active_prompt_id);
+        prompt_on(active_prompt);
+        for (let i = 0; i < inactive_prompt_ids.length; i++) {
+            let inactive_prompt = document.getElementById(inactive_prompt_ids[i]);
+            prompt_off(inactive_prompt);
+        }
+
+        let result = document.getElementById(result_id);
+        result.src = file_paths[active_prompt_id];
+    }
+ </script>
+
+ <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+ <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</html>
